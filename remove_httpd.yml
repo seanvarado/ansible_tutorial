@@ -1,0 +1,10 @@
+---
+
+- hosts: vtcita01
+  become: true
+  tasks:
+
+  - name: Remove httpd
+    yum:
+      name: httpd
+      state: absent
