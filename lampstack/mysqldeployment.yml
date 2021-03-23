@@ -1,0 +1,31 @@
+---
+# Deployment van MYSQL docker container met Ansible
+
+- hosts: webservers
+  become: yes
+  tasks:
+  
+  vars:
+    db_volume: db_data
+
+
+  tasks:
+
+  - name: Lanceer MySQL database in docker container
+    docker_container:
+      name: db
+      image: mysql:8.0
+      volumes:
+        - "{{ db_volume }}:/var/lib/mysql"
+      restart: true
+      env:
+        MYSQL_ROOT_PASSWORD: "12345"
+        MYSQL_DATABASE: test
+        MYSQL_USER: sean
+        MYSQL_PASSWORD: "12345"
+      ports:
+        - "33306:3306"
+
+
+
+

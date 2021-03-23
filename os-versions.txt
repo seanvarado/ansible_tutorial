@@ -1,0 +1,1 @@
+[u'Hostname vtcita01, OS: CentOS 7.9']

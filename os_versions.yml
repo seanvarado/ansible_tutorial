@@ -1,0 +1,26 @@
+---
+
+- hosts: webservers
+  become: true
+  tasks:
+
+  - name: Print OS details based on Ansible Facts
+    debug:
+      msg:
+        - "Hostname {{ ansible_hostname }}, OS: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+    register: output
+
+  - name: setfact to use fact details
+    set_fact:
+      osversion: "{{ output.msg }}"
+  
+  - name: Save output to textfile
+    delegate_to: localhost
+    become: false
+    lineinfile:
+      line: "{{ osversion | string }}"
+      create: yes
+      dest: /home/salvarado/ansible_tutorial/os-versions.txt
+      insertafter: EOF
+      mode: 0644
+

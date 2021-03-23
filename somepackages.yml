@@ -1,0 +1,20 @@
+---
+
+- hosts: webservers
+  become: true
+  tasks:
+
+  - name: Install mariaDB on CentOS
+    yum:
+      name: mariadb
+      state: latest
+
+- hosts: db_servers
+  gather_facts: yes
+  become: false
+  tasks:
+  - name: Distribution
+    debug: msg="{{ ansible_distribution }}"
+
+      
+

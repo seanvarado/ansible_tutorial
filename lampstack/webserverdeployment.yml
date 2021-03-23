@@ -1,0 +1,72 @@
+---
+# Dit is een Play die Docker installeert
+# Gemaakt door Sean Alvarado
+# Webserver deployment in een container met Ansible
+- hosts: webservers
+  become: yes
+  tasks:
+  - name: Install docker.
+    package:
+      name: docker
+      state: present
+  - name: Starting the docker service.
+    service:
+      name: docker
+      state: started
+
+# Installatie van pip
+  - name: Install pip 
+    yum:
+      name: python-pip
+      state: latest 
+ 
+# Hier installeren we docker-py
+  - name: Install docker-py
+    command: pip install docker-py
+
+# Pullen van de apache image van dockerhub  
+  - name: Pull a docker Image
+    docker_image:
+      name: httpd
+      source: pull
+    register: z
+  - name: Controleer de Pull status
+    debug:
+      var: z
+
+  - name: Hier maken we een Persisten Volume Dir
+    file:
+      path: "/root/pv"
+      state: directory
+
+  - name: Kopieer de HTML code in the Directory
+    copy:
+      src: "/root/Desktop/index.html"
+      dest: "/root/pv"
+
+  - name: Lanceer de apache container
+    docker_container:
+      name: apache-server
+      image: httpd
+      state: started
+      exposed_ports:
+         - "80"
+      ports:
+         - "8888:80"
+      volumes:
+         - /root/pv:/usr/local/apache2/htdocs
+  
+  - name: Zorgen dat de httpd service gestart is
+    service:
+      name: httpd
+      state: started
+
+
+
+
+
+
+
+
+
+
